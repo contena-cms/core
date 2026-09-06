@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Contena\Core\System\Payment\Payment\Event;
+namespace Contena\Core\System\Payment\Event;
 
 use Contena\Core\Framework\Context;
 use Contena\Core\Framework\Event\ContenaEvent;
@@ -10,9 +10,8 @@ use Contena\Core\System\Payment\Routing\PaymentRoute;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Enrich order metadata and custom fields before identity allocation and persistence.
+ * Modify the converted order data before identity allocation and persistence.
  * Throwing rejects conversion before any order or provider call is created.
- * Financial terms, ownership, route and persistence-managed fields are protected.
  */
 final class PaymentOrderConvertedEvent extends Event implements ContenaEvent
 {

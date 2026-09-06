@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Contena\Core\System\Payment\DataAbstractionLayer\PaymentChannelNotifyRecord;
+namespace Contena\Core\System\Payment\Notification;
 
 final class PaymentNotificationTypes
 {

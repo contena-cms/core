@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Contena\Core\System\Payment\OpenApi\Request;
+namespace Contena\Core\System\Payment\OpenApi\Struct;
 
 use Contena\Core\Framework\Struct\Struct;
 use Symfony\Component\Serializer\Attribute\SerializedName;

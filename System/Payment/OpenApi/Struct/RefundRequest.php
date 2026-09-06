@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Contena\Core\System\Payment\OpenApi\Request;
+namespace Contena\Core\System\Payment\OpenApi\Struct;
 
 use Contena\Core\Framework\Struct\Struct;
 use Contena\Tests\Integration\Core\System\Payment\OpenApi\OpenApiTest;
@@ -13,15 +13,24 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  *
  * @see OpenApiTest
  */
-final class QueryRequest extends Struct
+final class RefundRequest extends Struct
 {
     public function __construct(
+        #[SerializedName('external_refund_no')]
+        #[Assert\NotBlank(normalizer: 'trim')]
+        #[Assert\Length(max: 64)]
+        public readonly string $externalRefundNo,
+        #[SerializedName('refund_amount')]
+        #[Assert\Positive]
+        public readonly int $amount,
         #[SerializedName('order_no')]
         #[Assert\Length(max: 64)]
         public readonly ?string $orderNo = null,
         #[SerializedName('external_order_no')]
         #[Assert\Length(max: 64)]
         public readonly ?string $externalOrderNo = null,
+        #[Assert\Length(max: 255)]
+        public readonly ?string $reason = null,
     ) {
     }
 

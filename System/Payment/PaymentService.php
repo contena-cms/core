@@ -1,12 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Contena\Core\System\Payment\Service;
+namespace Contena\Core\System\Payment;
 
 use Contena\Core\Framework\Context;
 use Contena\Core\Framework\Plugin\Exception\DecorationPatternException;
 use Contena\Core\System\Payment\DataAbstractionLayer\PaymentApp\PaymentAppEntity;
 use Contena\Core\System\Payment\Payment\AbstractPaymentOrderService;
-use Contena\Core\System\Payment\Payment\Struct\OrderReference;
 use Contena\Core\System\Payment\Payment\Struct\PaymentRequest;
 use Contena\Core\System\Payment\Refund\AbstractPaymentRefundService;
 use Contena\Core\System\Payment\Refund\Struct\RefundRequest;
@@ -39,9 +38,9 @@ class PaymentService extends AbstractPaymentService
         return $this->paymentOrderService->pay($app, $request, $context);
     }
 
-    public function query(PaymentAppEntity $app, OrderReference $request, Context $context): PaymentResult
+    public function query(PaymentAppEntity $app, ?string $orderNo, ?string $externalOrderNo, Context $context): PaymentResult
     {
-        return $this->paymentOrderService->query($app, $request, $context);
+        return $this->paymentOrderService->query($app, $orderNo, $externalOrderNo, $context);
     }
 
     public function refund(PaymentAppEntity $app, RefundRequest $request, Context $context): PaymentResult

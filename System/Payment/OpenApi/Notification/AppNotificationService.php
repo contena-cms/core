@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Contena\Core\System\Payment\OpenApi\Service;
+namespace Contena\Core\System\Payment\OpenApi\Notification;
 
 use Contena\Core\Defaults;
 use Contena\Core\Framework\Context;
@@ -17,8 +17,8 @@ use Contena\Core\System\Payment\DataAbstractionLayer\PaymentNotifyRecord\Payment
 use Contena\Core\System\Payment\DataAbstractionLayer\PaymentNotifyRecord\PaymentNotifyRecordEntity;
 use Contena\Core\System\Payment\DataAbstractionLayer\PaymentNotifyRecord\PaymentNotifyRecordStatus;
 use Contena\Core\System\Payment\OpenApi\OpenApiException;
-use Contena\Core\System\Payment\OpenApi\Util\SignUtil;
-use Contena\Tests\Integration\Core\System\Payment\Service\AppNotificationServiceTest;
+use Contena\Core\System\Payment\OpenApi\Signature;
+use Contena\Tests\Integration\Core\System\Payment\OpenApi\Notification\AppNotificationServiceTest;
 use Doctrine\DBAL\Connection;
 use Psr\Clock\ClockInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -190,7 +190,7 @@ final class AppNotificationService
         $payload['notification_id'] = $record->getId();
         $payload['timestamp'] = (string) $this->clock->now()->getTimestamp();
         $payload['nonce'] = Uuid::randomHex();
-        $payload['sign'] = SignUtil::sign($payload, $app->appSecret);
+        $payload['sign'] = Signature::sign($payload, $app->appSecret);
 
         return $payload;
     }
