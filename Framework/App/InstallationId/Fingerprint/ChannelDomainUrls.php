@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Contena\Core\Framework\App\ShopId\Fingerprint;
+namespace Contena\Core\Framework\App\InstallationId\Fingerprint;
 
-use Contena\Core\Framework\App\ShopId\Fingerprint;
+use Contena\Core\Framework\App\InstallationId\Fingerprint;
 use Doctrine\DBAL\Connection;
 
 /**
@@ -23,7 +23,7 @@ readonly class ChannelDomainUrls implements Fingerprint
     }
 
     /**
-     * Newly added, removed or changed sales channel domains are an early indication that the shop ID should be changed.
+     * Newly added, removed or changed sales channel domains are an early indication that the installation ID should be changed.
      */
     public function getScore(): int
     {

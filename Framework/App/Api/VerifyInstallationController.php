@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Contena\Core\Framework\App\Api;
 
-use Contena\Core\Framework\App\Api\DTO\VerifyShop;
+use Contena\Core\Framework\App\Api\DTO\VerifyInstallation;
 use Contena\Core\Framework\App\Url\AppUrlVerifier;
 use Contena\Core\Framework\RateLimiter\RateLimiter;
 use Contena\Core\Framework\Routing\ApiRouteScope;
@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
  * @internal only for use by the app-system
  */
 #[Route(defaults: [PlatformRequest::ATTRIBUTE_ROUTE_SCOPE => [ApiRouteScope::ID]])]
-class VerifyShopController
+class VerifyInstallationController
 {
     public function __construct(
         private readonly RateLimiter $rateLimiter,
@@ -28,21 +28,21 @@ class VerifyShopController
     }
 
     #[Route(
-        path: 'api/app-system/shop/verify',
-        name: 'api.app_system.shop_verify',
+        path: 'api/app-system/installation/verify',
+        name: 'api.app_system.installation_verify',
         defaults: ['auth_required' => false],
         methods: ['GET']
     )]
-    public function verify(#[MapQueryString] VerifyShop $verifyShopRequest, Request $request): Response
+    public function verify(#[MapQueryString] VerifyInstallation $verifyInstallationRequest, Request $request): Response
     {
         $ip = $request->getClientIp();
         if ($ip === null) {
             return new JsonResponse([], Response::HTTP_BAD_REQUEST);
         }
 
-        $this->rateLimiter->ensureAccepted(RateLimiter::APP_SHOP_VERIFY, $ip);
+        $this->rateLimiter->ensureAccepted(RateLimiter::APP_INSTALLATION_VERIFY, $ip);
 
-        if ($this->appUrlVerifier->completeVerification($verifyShopRequest->runId, $verifyShopRequest->token)) {
+        if ($this->appUrlVerifier->completeVerification($verifyInstallationRequest->runId, $verifyInstallationRequest->token)) {
             return new JsonResponse([], Response::HTTP_NO_CONTENT);
         }
 

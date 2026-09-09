@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Contena\Core\Framework\App\ShopIdChangeResolver;
+namespace Contena\Core\Framework\App\InstallationIdChangeResolver;
 
 use Contena\Core\Framework\App\AppException;
 use Contena\Core\Framework\Context;
@@ -11,7 +11,7 @@ use Contena\Core\Framework\Context;
 readonly class Resolver
 {
     /**
-     * @param iterable<ShopIdChangeStrategy> $strategies
+     * @param iterable<InstallationIdChangeStrategy> $strategies
      */
     public function __construct(
         private iterable $strategies
@@ -28,7 +28,7 @@ readonly class Resolver
             }
         }
 
-        throw AppException::shopIdChangeResolveStrategyNotFound($strategyName);
+        throw AppException::installationIdChangeResolveStrategyNotFound($strategyName);
     }
 
     /**

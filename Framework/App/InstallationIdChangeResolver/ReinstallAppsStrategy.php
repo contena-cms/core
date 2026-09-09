@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Contena\Core\Framework\App\ShopIdChangeResolver;
+namespace Contena\Core\Framework\App\InstallationIdChangeResolver;
 
 use Contena\Core\Framework\App\AppCollection;
 use Contena\Core\Framework\App\AppException;
+use Contena\Core\Framework\App\InstallationId\InstallationIdProvider;
 use Contena\Core\Framework\App\Lifecycle\AppManager;
-use Contena\Core\Framework\App\ShopId\ShopIdProvider;
 use Contena\Core\Framework\Context;
 use Contena\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Contena\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -14,14 +14,14 @@ use Psr\Log\LoggerInterface;
 /**
  * @internal
  *
- * Resolver used when apps should be re-registered with a new shopId,
- * meaning the old shop and its apps continue to work like before,
- * while this installation registers as a brand-new shop at the app servers
+ * Resolver used when apps should be re-registered with a new installationId,
+ * meaning the original installation and its apps continue to work like before,
+ * while this copy registers as a brand-new installation at the app servers
  *
  * Will run through the registration process for all apps again
- * with the new appUrl and new shopId and replay the install lifecycle events for every app
+ * with the new appUrl and new installationId and replay the install lifecycle events for every app
  */
-class ReinstallAppsStrategy implements ShopIdChangeStrategy
+class ReinstallAppsStrategy implements InstallationIdChangeStrategy
 {
     final public const string STRATEGY_NAME = 'reinstall-apps';
 
@@ -31,7 +31,7 @@ class ReinstallAppsStrategy implements ShopIdChangeStrategy
     public function __construct(
         private readonly EntityRepository $appRepository,
         private readonly AppManager $appManager,
-        private readonly ShopIdProvider $shopIdProvider,
+        private readonly InstallationIdProvider $installationIdProvider,
         private readonly LoggerInterface $logger
     ) {
     }
@@ -43,15 +43,15 @@ class ReinstallAppsStrategy implements ShopIdChangeStrategy
 
     public function getDescription(): string
     {
-        return 'This is typically the right option if you have made a copy of your shop (e.g. a staging or testing environment of a blogion shop) and you want to use the apps in this copy. Contena will re-install the apps and newly register at the app servers using the new shop identifier. Your shop will identify as a new shop.';
+        return 'This is typically the right option if you have made a copy of your installation (e.g. a staging or testing environment) and you want to use the apps in this copy. Contena will re-install the apps and register at the app servers using the new installation identifier. The copied installation will identify as a new installation.';
     }
 
     public function resolve(Context $context): void
     {
-        $this->shopIdProvider->deleteShopId();
+        $this->installationIdProvider->deleteInstallationId();
 
         // Re-registering contacts external app servers. If one app is unreachable we still want the
-        // remaining apps to learn about the shop change, then report all failed apps together.
+        // Let the remaining apps learn about the installation change, then report all failed apps together.
         /** @var list<string> $failedApps */
         $failedApps = [];
 
@@ -59,7 +59,7 @@ class ReinstallAppsStrategy implements ShopIdChangeStrategy
             try {
                 $this->appManager->reregister($app, $context);
             } catch (\Throwable $e) {
-                $this->logger->error('Failed to re-register app after shop ID change.', [
+                $this->logger->error('Failed to re-register app after installation ID change.', [
                     'appName' => $app->getName(),
                     'exception' => $e,
                 ]);

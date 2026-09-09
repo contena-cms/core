@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @internal only for use by the app-system
  */
-class VerifyShop
+class VerifyInstallation
 {
     public function __construct(
         #[Assert\NotBlank]

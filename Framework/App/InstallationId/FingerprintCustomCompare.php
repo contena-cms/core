@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Contena\Core\Framework\App\ShopId;
+namespace Contena\Core\Framework\App\InstallationId;
 
 /**
  * @internal
@@ -14,7 +14,7 @@ interface FingerprintCustomCompare
     /**
      * Custom comparison method to calculate a match score based on the difference between stamps.
      *
-     * The method should return a score between 0 and 100. 0 indicates match, no shop id change required. 100 indicates shop id change absolutely required.
+     * The method should return a score between 0 and 100. 0 indicates match, no installation id change required. 100 indicates installation id change absolutely required.
      *
      * @param string|null $storedStamp The previously stored stamp, or null if none exists
      */

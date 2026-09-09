@@ -1,17 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace Contena\Core\Framework\App\ShopId;
+namespace Contena\Core\Framework\App\InstallationId;
 
 use Contena\Core\Framework\App\AppException;
-use Contena\Core\Framework\App\ShopId\Fingerprint\AppUrl;
 
 /**
  * @internal
  *
- * @phpstan-type ShopIdV1Config array{value: string, app_url: string}
- * @phpstan-type ShopIdV2Config array{id: string, version: 2, fingerprints: array<string, string>}
+ * @phpstan-type InstallationIdConfig array{id: string, version: 2, fingerprints: array<string, string>}
  */
-readonly class ShopId implements \Stringable
+readonly class InstallationId implements \Stringable
 {
     /**
      * @param array<string, string> $fingerprints
@@ -33,15 +31,10 @@ readonly class ShopId implements \Stringable
         return $this->fingerprints[$identifier] ?? null;
     }
 
-    public static function v1(string $id, string $appUrl): self
-    {
-        return new self($id, [AppUrl::IDENTIFIER => $appUrl], 1);
-    }
-
     /**
      * @param array<string, string> $fingerprints
      */
-    public static function v2(string $id, array $fingerprints = []): self
+    public static function create(string $id, array $fingerprints = []): self
     {
         return new self($id, $fingerprints, 2);
     }
@@ -51,15 +44,11 @@ readonly class ShopId implements \Stringable
      */
     public static function fromSystemConfig(array $config): self
     {
-        if (self::isV1($config)) {
-            return self::v1($config['value'], $config['app_url']);
+        if (self::isValidConfig($config)) {
+            return self::create($config['id'], $config['fingerprints']);
         }
 
-        if (self::isV2($config)) {
-            return self::v2($config['id'], $config['fingerprints']);
-        }
-
-        throw AppException::invalidShopIdConfiguration();
+        throw AppException::invalidInstallationIdConfiguration();
     }
 
     /**
@@ -81,19 +70,10 @@ readonly class ShopId implements \Stringable
     /**
      * @param array<string, mixed> $config
      */
-    private static function isV1(array $config): bool
-    {
-        return isset($config['value'])
-            && isset($config['app_url']);
-    }
-
-    /**
-     * @param array<string, mixed> $config
-     */
-    private static function isV2(array $config): bool
+    private static function isValidConfig(array $config): bool
     {
         return isset($config['id'])
-            && isset($config['version'])
+            && ($config['version'] ?? null) === 2
             && isset($config['fingerprints']);
     }
 }

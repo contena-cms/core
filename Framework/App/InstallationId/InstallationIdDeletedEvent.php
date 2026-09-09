@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Contena\Core\Framework\App\ShopId;
+namespace Contena\Core\Framework\App\InstallationId;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
@@ -9,6 +9,6 @@ use Symfony\Contracts\EventDispatcher\Event;
  *
  * @codeCoverageIgnore
  */
-class ShopIdDeletedEvent extends Event
+class InstallationIdDeletedEvent extends Event
 {
 }

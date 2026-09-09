@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Contena\Core\Framework\App\ShopIdChangeResolver;
+namespace Contena\Core\Framework\App\InstallationIdChangeResolver;
 
 use Contena\Core\Framework\App\AppCollection;
+use Contena\Core\Framework\App\InstallationId\InstallationIdProvider;
 use Contena\Core\Framework\App\Lifecycle\AppManager;
-use Contena\Core\Framework\App\ShopId\ShopIdProvider;
 use Contena\Core\Framework\Context;
 use Contena\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Contena\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -13,10 +13,10 @@ use Contena\Core\Framework\DataAbstractionLayer\Search\Criteria;
  * @internal
  *
  * Resolver used when apps should be uninstalled
- * and the shopId should be regenerated, meaning the old shops and old apps work like before
+ * and the installationId should be regenerated, meaning the old shops and old apps work like before
  * apps in the current installation will be uninstalled without informing them about that (as they still run on the old installation)
  */
-class UninstallAppsStrategy implements ShopIdChangeStrategy
+class UninstallAppsStrategy implements InstallationIdChangeStrategy
 {
     final public const STRATEGY_NAME = 'uninstall-apps';
 
@@ -25,7 +25,7 @@ class UninstallAppsStrategy implements ShopIdChangeStrategy
      */
     public function __construct(
         private readonly EntityRepository $appRepository,
-        private readonly ShopIdProvider $shopIdProvider,
+        private readonly InstallationIdProvider $installationIdProvider,
         private readonly AppManager $appManager,
     ) {
     }
@@ -37,16 +37,16 @@ class UninstallAppsStrategy implements ShopIdChangeStrategy
 
     public function getDescription(): string
     {
-        return 'This is typically the right option if you have made a copy of your shop (e.g. a staging or testing environment of a blogion shop) and you don’t want to use the apps in this copy. Contena will delete the apps without notifying the app servers. A new shop identifier will be generated and your shop will identify as a new shop.';
+        return 'This is typically the right option if you have made a copy of your installation (e.g. a staging or testing environment) and you do not want to use the apps in this copy. Contena will delete the apps without notifying the app servers. A new installation identifier will be generated and the copied installation will identify as a new installation.';
     }
 
     public function resolve(Context $context): void
     {
-        $this->shopIdProvider->deleteShopId();
+        $this->installationIdProvider->deleteInstallationId();
 
         foreach ($this->appRepository->search(new Criteria(), $context)->getEntities() as $app) {
             // Delete the app locally only, to not inform the app server about the deactivation/deletion
-            // as the app is still running in the old shop with the same shopId
+            // The app is still running in the original installation with the same installationId.
             $this->appManager->delete($app, $context);
         }
     }

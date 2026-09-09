@@ -6,9 +6,9 @@ use Contena\Core\Framework\Adapter\Request\RequestParamHelper;
 use Contena\Core\Framework\App\AppCollection;
 use Contena\Core\Framework\App\AppEntity;
 use Contena\Core\Framework\App\AppException;
-use Contena\Core\Framework\App\Exception\ShopIdChangeSuggestedException;
-use Contena\Core\Framework\App\ShopId\ShopIdProvider;
-use Contena\Core\Framework\App\ShopIdChangeResolver\Resolver;
+use Contena\Core\Framework\App\Exception\InstallationIdChangeSuggestedException;
+use Contena\Core\Framework\App\InstallationId\InstallationIdProvider;
+use Contena\Core\Framework\App\InstallationIdChangeResolver\Resolver;
 use Contena\Core\Framework\Context;
 use Contena\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Contena\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -25,26 +25,26 @@ use Symfony\Component\Routing\Attribute\Route;
  * @internal
  */
 #[Route(defaults: [PlatformRequest::ATTRIBUTE_ROUTE_SCOPE => [ApiRouteScope::ID]])]
-class ShopIdController extends AbstractController
+class InstallationIdController extends AbstractController
 {
     /**
      * @param EntityRepository<AppCollection> $appRepository
      */
     public function __construct(
-        private readonly Resolver $shopIdChangeResolver,
-        private readonly ShopIdProvider $shopIdProvider,
+        private readonly Resolver $installationIdChangeResolver,
+        private readonly InstallationIdProvider $installationIdProvider,
         private readonly EntityRepository $appRepository,
     ) {
     }
 
-    #[Route(path: 'api/app-system/shop-id/change-strategies', name: 'api.app_system.shop_id.change_strategies', methods: ['GET'])]
+    #[Route(path: 'api/app-system/installation-id/change-strategies', name: 'api.app_system.installation_id.change_strategies', methods: ['GET'])]
     public function getAvailableStrategies(): JsonResponse
     {
-        return new JsonResponse($this->shopIdChangeResolver->getAvailableStrategies());
+        return new JsonResponse($this->installationIdChangeResolver->getAvailableStrategies());
     }
 
-    #[Route(path: 'api/app-system/shop-id/change', name: 'api.app_system.shop_id.change', defaults: [PlatformRequest::ATTRIBUTE_ACL => ['system:app:change']], methods: ['POST'])]
-    public function changeShopId(Request $request, Context $context): Response
+    #[Route(path: 'api/app-system/installation-id/change', name: 'api.app_system.installation_id.change', defaults: [PlatformRequest::ATTRIBUTE_ACL => ['system:app:change']], methods: ['POST'])]
+    public function changeInstallationId(Request $request, Context $context): Response
     {
         $strategy = RequestParamHelper::get($request, 'strategy');
 
@@ -52,17 +52,17 @@ class ShopIdController extends AbstractController
             throw AppException::missingRequestParameter('strategy');
         }
 
-        $this->shopIdChangeResolver->resolve($strategy, $context);
+        $this->installationIdChangeResolver->resolve($strategy, $context);
 
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
-    #[Route(path: 'api/app-system/shop-id/check', name: 'api.app_system.shop_id.check', methods: ['POST'])]
-    public function checkShopId(Context $context): Response
+    #[Route(path: 'api/app-system/installation-id/check', name: 'api.app_system.installation_id.check', methods: ['POST'])]
+    public function checkInstallationId(Context $context): Response
     {
         try {
-            $this->shopIdProvider->getShopId();
-        } catch (ShopIdChangeSuggestedException $e) {
+            $this->installationIdProvider->getInstallationId();
+        } catch (InstallationIdChangeSuggestedException $e) {
             return new JsonResponse([
                 'apps' => $this->appsRegisteredAtAppServers($context),
                 'fingerprints' => $e->comparisonResult,

@@ -8,14 +8,14 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @internal
  */
-class ShopIdChangeStrategyNotFoundException extends AppException
+class InstallationIdChangeStrategyNotFoundException extends AppException
 {
     public function __construct(string $strategyName)
     {
         parent::__construct(
             Response::HTTP_BAD_REQUEST,
-            AppException::SHOP_ID_CHANGE_STRATEGY_NOT_FOUND,
-            'Shop ID change resolver with name "{{ strategyName }}" not found.',
+            AppException::INSTALLATION_ID_CHANGE_STRATEGY_NOT_FOUND,
+            'Installation ID change resolver with name "{{ strategyName }}" not found.',
             ['strategyName' => $strategyName]
         );
     }

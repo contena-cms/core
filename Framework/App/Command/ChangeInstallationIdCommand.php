@@ -2,7 +2,7 @@
 
 namespace Contena\Core\Framework\App\Command;
 
-use Contena\Core\Framework\App\ShopIdChangeResolver\Resolver;
+use Contena\Core\Framework\App\InstallationIdChangeResolver\Resolver;
 use Contena\Core\Framework\Context;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -15,12 +15,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @internal
  */
 #[AsCommand(
-    name: 'app:shop-id:change',
-    description: 'Change the shop ID by choosing a resolution strategy',
+    name: 'app:installation-id:change',
+    description: 'Change the installation ID by choosing a resolution strategy',
 )]
-class ChangeShopIdCommand extends Command
+class ChangeInstallationIdCommand extends Command
 {
-    public function __construct(private readonly Resolver $shopIdChangeResolver)
+    public function __construct(private readonly Resolver $installationIdChangeResolver)
     {
         parent::__construct();
     }
@@ -34,7 +34,7 @@ class ChangeShopIdCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $availableStrategies = $this->shopIdChangeResolver->getAvailableStrategies();
+        $availableStrategies = $this->installationIdChangeResolver->getAvailableStrategies();
         $strategy = $input->getArgument('strategy');
 
         if ($strategy === null || !\array_key_exists($strategy, $availableStrategies)) {
@@ -43,12 +43,12 @@ class ChangeShopIdCommand extends Command
             }
 
             $strategy = $io->choice(
-                'Choose what strategy should be applied when changing the shop ID?',
+                'Choose what strategy should be applied when changing the installation ID?',
                 $availableStrategies
             );
         }
 
-        $this->shopIdChangeResolver->resolve($strategy, Context::createCLIContext());
+        $this->installationIdChangeResolver->resolve($strategy, Context::createCLIContext());
 
         $io->success('Strategy "' . $strategy . '" was applied successfully');
 

@@ -2,10 +2,10 @@
 
 namespace Contena\Core\Framework\App\Command;
 
-use Contena\Core\Framework\App\ShopId\FingerprintComparisonResult;
-use Contena\Core\Framework\App\ShopId\FingerprintGenerator;
-use Contena\Core\Framework\App\ShopId\ShopId;
-use Contena\Core\Framework\App\ShopId\ShopIdProvider;
+use Contena\Core\Framework\App\InstallationId\FingerprintComparisonResult;
+use Contena\Core\Framework\App\InstallationId\FingerprintGenerator;
+use Contena\Core\Framework\App\InstallationId\InstallationId;
+use Contena\Core\Framework\App\InstallationId\InstallationIdProvider;
 use Contena\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -18,10 +18,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @internal
  */
 #[AsCommand(
-    name: 'app:shop-id:check',
-    description: 'Check if a shop ID change is suggested',
+    name: 'app:installation-id:check',
+    description: 'Check if an installation ID change is suggested',
 )]
-class CheckShopIdCommand extends Command
+class CheckInstallationIdCommand extends Command
 {
     public function __construct(
         private readonly SystemConfigService $systemConfigService,
@@ -37,32 +37,31 @@ class CheckShopIdCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $shopIdConfig = $this->systemConfigService->get(ShopIdProvider::SHOP_ID_SYSTEM_CONFIG_KEY_V2)
-            ?? $this->systemConfigService->get(ShopIdProvider::SHOP_ID_SYSTEM_CONFIG_KEY);
+        $installationIdConfig = $this->systemConfigService->get(InstallationIdProvider::INSTALLATION_ID_SYSTEM_CONFIG_KEY);
 
-        if (!\is_array($shopIdConfig)) {
-            $io->success('No shop ID has been generated yet.');
+        if (!\is_array($installationIdConfig)) {
+            $io->success('No installation ID has been generated yet.');
 
             return self::SUCCESS;
         }
 
-        $shopId = ShopId::fromSystemConfig($shopIdConfig);
-        $result = $this->fingerprintGenerator->matchFingerprints($shopId->fingerprints);
+        $installationId = InstallationId::fromSystemConfig($installationIdConfig);
+        $result = $this->fingerprintGenerator->matchFingerprints($installationId->fingerprints);
 
-        $this->renderShopIdTable($io, $shopId);
+        $this->renderInstallationIdTable($io, $installationId);
         $this->renderFingerprintsTable($io, $result);
         $this->renderResult($io, $result);
 
         return $result->isMatching() ? self::SUCCESS : self::FAILURE;
     }
 
-    private function renderShopIdTable(SymfonyStyle $io, ShopId $shopId): void
+    private function renderInstallationIdTable(SymfonyStyle $io, InstallationId $installationId): void
     {
-        $shopIdTable = new Table($io);
-        $shopIdTable->setVertical();
-        $shopIdTable->setHeaders(['Shop ID', 'Version']);
-        $shopIdTable->addRow([$shopId->id, $shopId->version]);
-        $shopIdTable->render();
+        $installationIdTable = new Table($io);
+        $installationIdTable->setVertical();
+        $installationIdTable->setHeaders(['Installation ID', 'Version']);
+        $installationIdTable->addRow([$installationId->id, $installationId->version]);
+        $installationIdTable->render();
 
         $io->writeln('');
     }
@@ -88,9 +87,9 @@ class CheckShopIdCommand extends Command
     private function renderResult(SymfonyStyle $io, FingerprintComparisonResult $result): void
     {
         if ($result->isMatching()) {
-            $io->success('Shop ID change not suggested.');
+            $io->success('Installation ID change not suggested.');
         } else {
-            $io->warning(\sprintf('Shop ID change suggested (Score: %s/%s). Run "bin/console app:shop-id:change" to change the shop ID.', $result->score, $result->threshold));
+            $io->warning(\sprintf('Installation ID change suggested (Score: %s/%s). Run "bin/console app:installation-id:change" to change the installation ID.', $result->score, $result->threshold));
         }
     }
 }

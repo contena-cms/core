@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Contena\Core\Framework\App\ShopId\Fingerprint;
+namespace Contena\Core\Framework\App\InstallationId\Fingerprint;
 
-use Contena\Core\Framework\App\ShopId\Fingerprint;
-use Contena\Core\Framework\App\ShopId\FingerprintCustomCompare;
+use Contena\Core\Framework\App\InstallationId\Fingerprint;
+use Contena\Core\Framework\App\InstallationId\FingerprintCustomCompare;
 
 /**
  * @internal
@@ -37,7 +37,7 @@ readonly class InstallationPath implements Fingerprint, FingerprintCustomCompare
      * A partial change at the end is low score
      * A partial change at the beginning or drastic change is a high score
      *
-     * @see \Contena\Tests\Unit\Core\Framework\App\ShopId\Fingerprint\InstallationPathTest::testCompare for examples
+     * @see \Contena\Tests\Unit\Core\Framework\App\InstallationId\Fingerprint\InstallationPathTest::testCompare for examples
      */
     public function compare(?string $storedStamp): int
     {

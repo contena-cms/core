@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Contena\Core\Framework\App\ShopId\Fingerprint;
+namespace Contena\Core\Framework\App\InstallationId\Fingerprint;
 
 use Contena\Core\DevOps\Environment\EnvironmentHelper;
 use Contena\Core\Framework\App\AppException;
-use Contena\Core\Framework\App\ShopId\Fingerprint;
+use Contena\Core\Framework\App\InstallationId\Fingerprint;
 
 /**
  * @internal
@@ -19,7 +19,7 @@ readonly class AppUrl implements Fingerprint
     }
 
     /**
-     * Changing the APP_URL usually indicates with near certainty that the shop has been permanently moved or has been cloned to a new environment.
+     * Changing the APP_URL usually indicates with near certainty that the installation has been permanently moved or cloned to a new environment.
      */
     public function getScore(): int
     {
